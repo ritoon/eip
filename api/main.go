@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +29,7 @@ func CreateUser(ctx *gin.Context) {
 
 	err = db.CreateUser(&u)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		RespErr(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, u)
@@ -37,7 +39,7 @@ func GetUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	u, err := db.GetUser(uuid)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		RespErr(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, u)
@@ -47,8 +49,37 @@ func DeleteUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	err := db.DeleteUser(uuid)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		RespErr(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusAccepted, nil)
+}
+
+func RespErr(ctx *gin.Context, err error) {
+	log.Println(err)
+	respErr(ctx, err)
+}
+
+func respErr(ctx *gin.Context, err error) {
+	switch e := err.(type) {
+	case *db.Error:
+		switch e.Code {
+		case int(db.ErrCodeNotFound):
+			ctx.JSON(http.StatusNotFound, gin.H{"error": e.Message})
+			return
+		case int(db.ErrCodeInternal):
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Message})
+			return
+		default:
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e.Message})
+			return
+		}
+	default:
+		eOrigin := errors.Unwrap(e)
+		if eOrigin == nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": e})
+			return
+		}
+		respErr(ctx, eOrigin)
+	}
 }
