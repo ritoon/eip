@@ -21,11 +21,19 @@ func CreateUser(u *model.User) error {
 }
 
 func GetUser(uuidUser string) (*model.User, error) {
-	//
-	return nil, nil
+	u, ok := us[uuidUser]
+
+	if !ok {
+		return nil, fmt.Errorf("db: getUser %q not found", uuidUser)
+	}
+	return u, nil
 }
 
 func DeleteUser(uuidUser string) error {
-	//
+	if _, err := GetUser(uuidUser); err != nil {
+		return fmt.Errorf("db: deleteUser %w", err)
+	}
+	delete(us, uuidUser)
 	return nil
+
 }

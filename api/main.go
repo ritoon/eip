@@ -4,14 +4,22 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/ritoon/eip/api/db"
 )
 
 func main() {
 	router := gin.Default()
-	router.GET("", home)
+	router.GET("users/:uuid", GetUser)
 	router.Run(":8888")
 }
 
-func home(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
+func GetUser(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	u, err := db.GetUser(uuid)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, u)
 }
