@@ -9,6 +9,7 @@ import (
 
 	"github.com/ritoon/eip/api/db"
 	"github.com/ritoon/eip/api/model"
+	"github.com/ritoon/eip/api/util"
 )
 
 func main() {
@@ -38,7 +39,12 @@ func LoginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid password"})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"jwt": u.UUID})
+	jwtValue, err := util.NewJWT(u.UUID, u.Email)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"jwt": jwtValue})
 }
 
 func CreateUser(ctx *gin.Context) {
