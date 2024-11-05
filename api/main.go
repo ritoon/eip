@@ -13,10 +13,32 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.POST("login", LoginUser)
 	router.POST("users", CreateUser)
 	router.GET("users/:uuid", GetUser)
 	router.DELETE("users/:uuid", DeleteUser)
 	router.Run(":8888")
+}
+
+var dbConn = db.New()
+
+func LoginUser(ctx *gin.Context) {
+	var payload model.UserLogin
+	err := ctx.Bind(&payload)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	u, err := dbConn.GetUserByEmail(payload.Email)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+	if u.Pass != payload.Pass {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid password"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"jwt": u.UUID})
 }
 
 func CreateUser(ctx *gin.Context) {
@@ -27,7 +49,7 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	err = db.CreateUser(&u)
+	err = dbConn.CreateUser(&u)
 	if err != nil {
 		RespErr(ctx, err)
 		return
@@ -37,7 +59,7 @@ func CreateUser(ctx *gin.Context) {
 
 func GetUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
-	u, err := db.GetUser(uuid)
+	u, err := dbConn.GetUser(uuid)
 	if err != nil {
 		RespErr(ctx, err)
 		return
@@ -47,7 +69,7 @@ func GetUser(ctx *gin.Context) {
 
 func DeleteUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
-	err := db.DeleteUser(uuid)
+	err := dbConn.DeleteUser(uuid)
 	if err != nil {
 		RespErr(ctx, err)
 		return
