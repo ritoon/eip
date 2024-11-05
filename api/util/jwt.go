@@ -3,6 +3,7 @@ package util
 import (
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -22,4 +23,11 @@ func NewJWT(uuidUser, email string) (string, error) {
 		return "", nil
 	}
 	return tokenString, nil
+}
+
+func ValidateJwt(tokenString string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		ctx.Next()
+	}
 }
