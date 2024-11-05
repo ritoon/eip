@@ -13,7 +13,7 @@ func CreateUser(u *model.User) error {
 	// Create a user.
 	uuid, err := uuid.NewRandom()
 	if err != nil {
-		return fmt.Errorf("db: createUser %w", err)
+		return NewErrorInternal("createUser", err)
 	}
 	u.UUID = uuid.String()
 	us[u.UUID] = u
@@ -24,7 +24,7 @@ func GetUser(uuidUser string) (*model.User, error) {
 	u, ok := us[uuidUser]
 
 	if !ok {
-		return nil, fmt.Errorf("db: getUser %q not found", uuidUser)
+		return nil, NewErrorNotFound("getUser", fmt.Errorf("db: getUser %q not found", uuidUser))
 	}
 	return u, nil
 }
