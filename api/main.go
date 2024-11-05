@@ -14,11 +14,13 @@ import (
 
 func main() {
 	router := gin.Default()
+	jwtValidation := util.ValidateJwt()
 	router.POST("login", LoginUser)
-	router.POST("users", CreateUser)
+	router.POST("users", jwtValidation, CreateUser)
 	router.GET("users/:uuid", GetUser)
-	router.DELETE("users/:uuid", DeleteUser)
+	router.DELETE("users/:uuid", jwtValidation, DeleteUser)
 	router.Run(":8888")
+
 }
 
 var dbConn = db.New()
