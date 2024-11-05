@@ -61,6 +61,7 @@ func RespErr(ctx *gin.Context, err error) {
 }
 
 func respErr(ctx *gin.Context, err error) {
+
 	switch e := err.(type) {
 	case *db.Error:
 		switch e.Code {

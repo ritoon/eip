@@ -29,9 +29,9 @@ func GetUser(uuidUser string) (*model.User, error) {
 	return u, nil
 }
 
-func DeleteUser(uuidUser string) error {
+func DeleteUser(uuidUser string) *Error {
 	if _, err := GetUser(uuidUser); err != nil {
-		return fmt.Errorf("db: deleteUser %w", err)
+		return &Error{Err: err, Message: "deleteUser", Code: 404}
 	}
 	delete(us, uuidUser)
 	return nil
