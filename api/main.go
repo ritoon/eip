@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/ritoon/eip/api/db"
+	"github.com/ritoon/eip/api/model"
 )
 
 func main() {
@@ -22,4 +23,30 @@ func GetUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, u)
+}
+
+func DeleteUser(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	err := db.DeleteUser(uuid)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusAccepted, nil)
+}
+
+func CreateUser(ctx *gin.Context) {
+	var u model.User
+	err := ctx.Bind(&u)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = db.CreateUser(&u)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, u)
 }
