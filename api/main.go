@@ -11,8 +11,26 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.POST("users", CreateUser)
 	router.GET("users/:uuid", GetUser)
+	router.DELETE("users/:uuid", DeleteUser)
 	router.Run(":8888")
+}
+
+func CreateUser(ctx *gin.Context) {
+	var u model.User
+	err := ctx.Bind(&u)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = db.CreateUser(&u)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusCreated, u)
 }
 
 func GetUser(ctx *gin.Context) {
@@ -33,20 +51,4 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusAccepted, nil)
-}
-
-func CreateUser(ctx *gin.Context) {
-	var u model.User
-	err := ctx.Bind(&u)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	err = db.CreateUser(&u)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	ctx.JSON(http.StatusCreated, u)
 }
