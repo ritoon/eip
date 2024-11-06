@@ -7,7 +7,7 @@ import (
 	"github.com/ritoon/eip/api/model"
 )
 
-func CreateAddress(ctx *gin.Context) {
+func (h *Handler) CreateAddress(ctx *gin.Context) {
 	var u model.Address
 	err := ctx.Bind(&u)
 	if err != nil {
@@ -23,7 +23,7 @@ func CreateAddress(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
-func GetAddress(ctx *gin.Context) {
+func (h *Handler) GetAddress(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	u, err := dbConn.GetAddress(uuid)
 	if err != nil {
@@ -34,7 +34,7 @@ func GetAddress(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func DeleteAddress(ctx *gin.Context) {
+func (h *Handler) DeleteAddress(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	err := dbConn.DeleteAddress(uuid)
 	if err != nil {

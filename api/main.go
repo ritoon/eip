@@ -5,6 +5,8 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"github.com/ritoon/eip/api/cache"
+	"github.com/ritoon/eip/api/db"
 	"github.com/ritoon/eip/api/docs"
 	"github.com/ritoon/eip/api/handler"
 	"github.com/ritoon/eip/api/util"
@@ -15,24 +17,27 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/"
 	jwtValidation := util.ValidateJwt()
 	account := gin.Accounts{"admin": "admin"}
+	dbConn := db.New()
+	cacheConn := cache.New("localhost:6379", "", 0)
+	h := handler.New(cacheConn, dbConn)
 
-	router.POST("login", handler.LoginUser)
+	router.POST("login", h.LoginUser)
 
 	// Users
-	router.POST("users", gin.BasicAuth(account), handler.CreateUser)
-	router.GET("users/:uuid", jwtValidation, handler.GetUser)
-	router.DELETE("users/:uuid", jwtValidation, handler.DeleteUser)
+	router.POST("users", gin.BasicAuth(account), h.CreateUser)
+	router.GET("users/:uuid", jwtValidation, h.GetUser)
+	router.DELETE("users/:uuid", jwtValidation, h.DeleteUser)
 
 	// Games
-	router.GET("games", jwtValidation, handler.SearchGames)
-	router.POST("games", jwtValidation, handler.CreateGame)
-	router.GET("games/:uuid", jwtValidation, handler.GetGame)
-	router.DELETE("games/:uuid", jwtValidation, handler.DeleteGame)
+	router.GET("games", jwtValidation, h.SearchGames)
+	router.POST("games", jwtValidation, h.CreateGame)
+	router.GET("games/:uuid", jwtValidation, h.GetGame)
+	router.DELETE("games/:uuid", jwtValidation, h.DeleteGame)
 
 	// Addresses
-	router.POST("addresses", jwtValidation, handler.CreateAddress)
-	router.GET("addresses/:uuid", jwtValidation, handler.GetAddress)
-	router.DELETE("addresses/:uuid", jwtValidation, handler.DeleteAddress)
+	router.POST("addresses", jwtValidation, h.CreateAddress)
+	router.GET("addresses/:uuid", jwtValidation, h.GetAddress)
+	router.DELETE("addresses/:uuid", jwtValidation, h.DeleteAddress)
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

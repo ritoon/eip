@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ritoon/eip/api/model"
 )
 
-func CreateGame(ctx *gin.Context) {
+func (h *Handler) CreateGame(ctx *gin.Context) {
 	var u model.Game
 	err := ctx.Bind(&u)
 	if err != nil {
@@ -23,7 +24,7 @@ func CreateGame(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
-func GetGame(ctx *gin.Context) {
+func (h *Handler) GetGame(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	u, err := dbConn.GetGame(uuid)
 	if err != nil {
@@ -34,7 +35,7 @@ func GetGame(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func DeleteGame(ctx *gin.Context) {
+func (h *Handler) DeleteGame(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	err := dbConn.DeleteGame(uuid)
 	if err != nil {
@@ -44,12 +45,55 @@ func DeleteGame(ctx *gin.Context) {
 	ctx.JSON(http.StatusAccepted, nil)
 }
 
-func SearchGames(ctx *gin.Context) {
+func (h *Handler) SearchGames(ctx *gin.Context) {
 	name := ctx.Query("name")
+	res, err := h.cache.Get(ctx, "searchgames-"+name)
+	if err == nil {
+		ctx.Writer.WriteHeader(http.StatusOK)
+		ctx.Header("Content-Type", "application/json")
+		ctx.Writer.Write(res)
+		return
+	}
+
+	log.Println("err redis", err)
+
 	games, err := dbConn.SearchGames(name)
 	if err != nil {
 		RespErr(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusAccepted, games)
+	err = h.cache.Set(ctx, "searchgames-"+name, games)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, games)
+
 }
+
+// func  SearchGames(ctx *gin.Context) gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 	name := ctx.Query("name")
+// 	res, err := h.cache.Get(ctx, "searchgames-"+name)
+// 	if err == nil {
+// 		ctx.Writer.WriteHeader(http.StatusOK)
+// 		ctx.Header("Content-Type", "application/json")
+// 		ctx.Writer.Write(res)
+// 		return
+// 	}
+
+// 	log.Println("err redis", err)
+
+// 	games, err := dbConn.SearchGames(name)
+// 	if err != nil {
+// 		RespErr(ctx, err)
+// 		return
+// 	}
+// 	err = h.cache.Set(ctx, "searchgames-"+name, games)
+// 	if err != nil {
+// 		RespErr(ctx, err)
+// 		return
+// 	}
+// 	ctx.JSON(http.StatusOK, games)
+
+// }

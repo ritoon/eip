@@ -24,7 +24,7 @@ var dbConn = db.New()
 // @Produce json
 // @Success 200 {object} util.JWTResponse
 // @Router /login [post]
-func LoginUser(ctx *gin.Context) {
+func (h *Handler) LoginUser(ctx *gin.Context) {
 	var payload model.UserLogin
 	err := ctx.Bind(&payload)
 	if err != nil {
@@ -49,7 +49,7 @@ func LoginUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"jwt": jwtValue})
 }
 
-func CreateUser(ctx *gin.Context) {
+func (h *Handler) CreateUser(ctx *gin.Context) {
 	var u model.User
 	err := ctx.Bind(&u)
 	if err != nil {
@@ -65,7 +65,7 @@ func CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
-func GetUser(ctx *gin.Context) {
+func (h *Handler) GetUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	u, err := dbConn.GetUser(uuid)
 	if err != nil {
@@ -76,7 +76,7 @@ func GetUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func DeleteUser(ctx *gin.Context) {
+func (h *Handler) DeleteUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	err := dbConn.DeleteUser(uuid)
 	if err != nil {
