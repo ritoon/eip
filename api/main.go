@@ -16,7 +16,8 @@ func main() {
 	router := gin.Default()
 	jwtValidation := util.ValidateJwt()
 	router.POST("login", LoginUser)
-	router.POST("users", jwtValidation, CreateUser)
+	account := gin.Accounts{"admin": "admin"}
+	router.POST("users", gin.BasicAuth(account), CreateUser)
 	router.GET("users/:uuid", GetUser)
 	router.DELETE("users/:uuid", jwtValidation, DeleteUser)
 	router.Run(":8888")
@@ -72,6 +73,7 @@ func GetUser(ctx *gin.Context) {
 		RespErr(ctx, err)
 		return
 	}
+	// u.Pass = nil
 	ctx.JSON(http.StatusOK, u)
 }
 

@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -31,7 +32,7 @@ func ValidateJwt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authValue := ctx.GetHeader("Authorization")
 		if authValue == "" || !strings.Contains(authValue, "Bearer") {
-			ctx.JSON(401, gin.H{"error": "authorization header is required"})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header is required"})
 			ctx.Abort()
 			return
 		}
@@ -46,7 +47,7 @@ func ValidateJwt() gin.HandlerFunc {
 			return hmacSampleSecret, nil
 		})
 		if err != nil {
-			ctx.JSON(401, gin.H{"error": err.Error()})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return
 		}
@@ -54,7 +55,7 @@ func ValidateJwt() gin.HandlerFunc {
 			ctx.Set("uuid_user", claims["uuid_user"])
 			ctx.Set("email", claims["email"])
 		} else {
-			ctx.JSON(401, gin.H{"error": "invalid token"})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			ctx.Abort()
 			return
 		}

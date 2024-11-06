@@ -26,17 +26,6 @@ type DBField struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
-var u = User{
-	DBField: DBField{
-		UUID: "1234",
-	},
-	Name: "Ritoon",
-	UserLogin: UserLogin{
-		Email: "",
-		Pass:  "1234",
-	},
-}
-
 type UserLogin struct {
 	Email string `json:"email"`
 	Pass  string `json:"pass"`

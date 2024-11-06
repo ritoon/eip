@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
 	"github.com/ritoon/eip/api/model"
