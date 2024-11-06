@@ -13,7 +13,8 @@ import (
 // User is a struct that represents a user.
 type User struct {
 	DBField
-	Name string `json:"name"`
+	Name    string   `json:"name"`
+	Address *Address `json:"address,omitempty" gorm:"-"`
 	UserLogin
 }
 

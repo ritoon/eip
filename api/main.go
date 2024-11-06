@@ -21,7 +21,6 @@ func main() {
 	router.GET("users/:uuid", GetUser)
 	router.DELETE("users/:uuid", jwtValidation, DeleteUser)
 	router.Run(":8888")
-
 }
 
 var dbConn = db.New()

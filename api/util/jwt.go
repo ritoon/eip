@@ -20,12 +20,12 @@ type CustomClaims struct {
 var hmacSampleSecret = []byte("secret")
 
 func NewJWT(uuidUser, email string) (string, error) {
+	var c CustomClaims
+	c.UUIDUser = uuidUser
+	c.Email = email
+	c.ExpiresAt = time.Now().Add(1 * time.Hour).Unix()
 	// Create a new token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uuid_user": uuidUser,
-		"email":     email,
-		"exp":       time.Now().Add(1 * time.Hour).Unix(),
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(hmacSampleSecret)
@@ -58,9 +58,9 @@ func ValidateJwt() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			ctx.Set("uuid_user", claims["uuid_user"])
-			ctx.Set("email", claims["email"])
+		if claims, ok := token.Claims.(CustomClaims); ok && token.Valid {
+			ctx.Set("uuid_user", claims.UUIDUser)
+			ctx.Set("email", claims.Email)
 		} else {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			ctx.Abort()
