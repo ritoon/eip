@@ -10,6 +10,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type JWTResponse struct {
+	Jwt string `json:"jwt"`
+}
+
 type CustomClaims struct {
 	UUIDUser    string `json:"uuid_user"`
 	AccessLevel string `json:"access_level"`

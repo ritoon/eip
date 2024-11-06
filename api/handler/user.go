@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/ritoon/eip/api/db"
 	"github.com/ritoon/eip/api/model"
 	"github.com/ritoon/eip/api/util"
@@ -11,6 +12,18 @@ import (
 
 var dbConn = db.New()
 
+// @BasePath /api/v1
+
+// LoginUser godoc
+// @Summary login user
+// @Schemes http
+// @Description do ping
+// @Tags example
+// @Accept json
+// @Param payload body model.UserLogin true "User login"
+// @Produce json
+// @Success 200 {object} util.JWTResponse
+// @Router /login [post]
 func LoginUser(ctx *gin.Context) {
 	var payload model.UserLogin
 	err := ctx.Bind(&payload)

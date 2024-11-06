@@ -2,13 +2,17 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"github.com/ritoon/eip/api/docs"
 	"github.com/ritoon/eip/api/handler"
 	"github.com/ritoon/eip/api/util"
 )
 
 func main() {
 	router := gin.Default()
+	docs.SwaggerInfo.BasePath = "/"
 	jwtValidation := util.ValidateJwt()
 	account := gin.Accounts{"admin": "admin"}
 
@@ -29,5 +33,9 @@ func main() {
 	router.POST("addresses", jwtValidation, handler.CreateAddress)
 	router.GET("addresses/:uuid", jwtValidation, handler.GetAddress)
 	router.DELETE("addresses/:uuid", jwtValidation, handler.DeleteAddress)
+
+	// swagger
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
 	router.Run(":8888")
 }

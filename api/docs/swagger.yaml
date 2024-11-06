@@ -1,0 +1,39 @@
+definitions:
+  model.UserLogin:
+    properties:
+      email:
+        type: string
+      pass:
+        type: string
+    type: object
+  util.JWTResponse:
+    properties:
+      jwt:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: do ping
+      parameters:
+      - description: User login
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JWTResponse'
+      summary: login user
+      tags:
+      - example
+swagger: "2.0"
