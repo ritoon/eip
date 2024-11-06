@@ -1,6 +1,9 @@
 package model
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,7 +29,26 @@ type DBField struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
+type Password string
+
 type UserLogin struct {
-	Email string `json:"email"`
-	Pass  string `json:"pass"`
+	Email string    `json:"email"`
+	Pass  *Password `json:"pass,omitempty"`
+}
+
+func (p *Password) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	sum := sha256.Sum256([]byte(s))
+	val := fmt.Sprintf("%x", sum)
+	*p = Password(val)
+
+	return nil
+}
+
+func (p Password) MarshalJSON() ([]byte, error) {
+	return json.Marshal("********")
 }

@@ -10,6 +10,13 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type CustomClaims struct {
+	UUIDUser    string `json:"uuid_user"`
+	AccessLevel string `json:"access_level"`
+	Email       string `json:"email"`
+	jwt.StandardClaims
+}
+
 var hmacSampleSecret = []byte("secret")
 
 func NewJWT(uuidUser, email string) (string, error) {
