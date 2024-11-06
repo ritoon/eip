@@ -2,36 +2,30 @@ package db
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
 	"github.com/ritoon/eip/api/model"
 )
 
-type DB struct {
-	dbConn *gorm.DB
-}
-
-func New() *DB {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	db.AutoMigrate(&model.User{})
-	return &DB{dbConn: db}
-}
-
 func (db *DB) CreateUser(u *model.User) error {
 	// Create a user.
+	log.Println("CreateUser u: ", u)
 	db.dbConn.Create(u)
+
+	// u2 := &model.User{
+	// 	Name:    "jinzhu",
+	// 	Address: model.Address{City: "Paris"},
+	// }
+	// db.dbConn.Create(u2)
+
 	return nil
 }
 
 func (db *DB) GetUser(uuidUser string) (*model.User, error) {
 	u := model.User{}
-	err := db.dbConn.Model(&model.User{}).Where("uuid = ?", uuidUser).First(&u).Error
+	err := db.dbConn.Model(&model.User{}).Preload("Games").Where("uuid = ?", uuidUser).First(&u).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, NewErrorNotFound("getUser", fmt.Errorf("db: getUser %q not found", uuidUser))

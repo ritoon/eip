@@ -13,9 +13,14 @@ import (
 // User is a struct that represents a user.
 type User struct {
 	DBField
-	Name    string   `json:"name"`
-	Address *Address `json:"address,omitempty" gorm:"-"`
+	Name    string  `json:"name"`
+	Address Address `json:"address,omitempty" gorm:"foreignKey:UUIDOwner"`
+	Games   []Game  `json:"games,omitempty" gorm:"foreignKey:UUIDOwner"`
 	UserLogin
+}
+
+func (User) TableName() string {
+	return "users"
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -25,8 +30,8 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type DBField struct {
-	UUID      string    `json:"uuid"`
-	CreatedAt time.Time `json:"created_at"`
+	UUID      string    `json:"uuid" gorm:"primaryKey"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
