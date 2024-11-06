@@ -38,7 +38,8 @@ func LoginUser(ctx *gin.Context) {
 		RespErr(ctx, err)
 		return
 	}
-	if u.Pass != payload.Pass {
+
+	if u.Pass == nil || payload.Pass == nil || *u.Pass != *payload.Pass {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid password"})
 		return
 	}
