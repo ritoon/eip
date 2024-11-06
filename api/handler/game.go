@@ -43,3 +43,13 @@ func DeleteGame(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusAccepted, nil)
 }
+
+func SearchGames(ctx *gin.Context) {
+	name := ctx.Query("name")
+	games, err := dbConn.SearchGames(name)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusAccepted, games)
+}

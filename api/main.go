@@ -20,6 +20,7 @@ func main() {
 	router.DELETE("users/:uuid", jwtValidation, handler.DeleteUser)
 
 	// Games
+	router.GET("games", jwtValidation, handler.SearchGames)
 	router.POST("games", jwtValidation, handler.CreateGame)
 	router.GET("games/:uuid", jwtValidation, handler.GetGame)
 	router.DELETE("games/:uuid", jwtValidation, handler.DeleteGame)

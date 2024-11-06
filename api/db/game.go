@@ -33,3 +33,20 @@ func (db *DB) DeleteGame(uuidGame string) *Error {
 	db.dbConn.Where("uuid = ?", uuidGame).Delete(&model.Game{})
 	return nil
 }
+
+func (db *DB) SearchGames(name string) ([]model.Game, error) {
+	var games []model.Game
+	if name != "" {
+		err := db.dbConn.Where("name = ?", name).Find(&games).Error
+		if err != nil {
+			return nil, NewErrorInternal("searchGames", err)
+		}
+		return games, nil
+	}
+
+	err := db.dbConn.Find(&games).Error
+	if err != nil {
+		return nil, NewErrorInternal("searchGames", err)
+	}
+	return games, nil
+}

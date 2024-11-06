@@ -17,6 +17,10 @@ type CustomClaims struct {
 	jwt.StandardClaims
 }
 
+func (c CustomClaims) Valid() error {
+	return nil
+}
+
 var hmacSampleSecret = []byte("secret")
 
 func NewJWT(uuidUser, email string) (string, error) {
@@ -45,12 +49,10 @@ func ValidateJwt() gin.HandlerFunc {
 		}
 
 		jwtValue := strings.ReplaceAll(authValue, "Bearer ", "")
-		token, err := jwt.Parse(jwtValue, func(token *jwt.Token) (interface{}, error) {
-			// Don't forget to validate the alg is what you expect:
+		token, err := jwt.ParseWithClaims(jwtValue, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
-			// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
 			return hmacSampleSecret, nil
 		})
 		if err != nil {
@@ -58,7 +60,8 @@ func ValidateJwt() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		if claims, ok := token.Claims.(CustomClaims); ok && token.Valid {
+
+		if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 			ctx.Set("uuid_user", claims.UUIDUser)
 			ctx.Set("email", claims.Email)
 		} else {
