@@ -25,7 +25,7 @@ func (db *DB) CreateUser(u *model.User) error {
 
 func (db *DB) GetUser(uuidUser string) (*model.User, error) {
 	u := model.User{}
-	err := db.dbConn.Model(&model.User{}).Preload("Games").Where("uuid = ?", uuidUser).First(&u).Error
+	err := db.dbConn.Model(&model.User{}).Preload("Games").Preload("Address").Where("uuid = ?", uuidUser).First(&u).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, NewErrorNotFound("getUser", fmt.Errorf("db: getUser %q not found", uuidUser))
