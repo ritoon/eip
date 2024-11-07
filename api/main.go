@@ -7,6 +7,8 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	ginratelimit "github.com/ljahier/gin-ratelimit"
+
 	"github.com/ritoon/eip/api/cache"
 	"github.com/ritoon/eip/api/db"
 	"github.com/ritoon/eip/api/docs"
@@ -23,20 +25,23 @@ func main() {
 	cacheConn := cache.New("localhost:6379", "", 0)
 	h := handler.New(cacheConn, dbConn)
 
-	router.POST("login", h.LoginUser)
-
 	cache2minForGames := util.GetCache(cacheConn, 2*time.Second, "searchgames", "name", handler.RespErr)
+	rateLimit := ginratelimit.NewTokenBucket(5, 1*time.Minute)
 
+	router.POST("login", ginratelimit.RateLimitByIP(rateLimit), h.LoginUser)
 	// Users
 	router.POST("users", gin.BasicAuth(account), h.CreateUser)
 	router.GET("users/:uuid", jwtValidation, h.GetUser)
 	router.DELETE("users/:uuid", jwtValidation, h.DeleteUser)
+
+	// mimeImagesOk := util.AuthorizedMimeType([]string{"image/jpeg", "image/png"})
 
 	// Games
 	router.GET("games", jwtValidation, cache2minForGames, h.SearchGames)
 	router.POST("games", jwtValidation, h.CreateGame)
 	router.GET("games/:uuid", jwtValidation, h.GetGame)
 	router.DELETE("games/:uuid", jwtValidation, h.DeleteGame)
+	router.POST("games/:uuid/images", jwtValidation, h.AddImageToGame)
 
 	// Addresses
 	router.POST("addresses", jwtValidation, h.CreateAddress)

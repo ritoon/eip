@@ -27,6 +27,20 @@ func (db *DB) GetGame(uuidGame string) (*model.Game, error) {
 	return &u, nil
 }
 
+func (db *DB) UpdateImage(uuidGame, uriImage string) (*model.Game, error) {
+	err := db.dbConn.Model(&model.Game{}).Where("uuid = ?", uuidGame).Updates(map[string]interface{}{
+		"uri_image": uriImage,
+	}).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, NewErrorNotFound("getGame", fmt.Errorf("db: getGame %q not found", uuidGame))
+		}
+		return nil, NewErrorInternal("getGame", err)
+	}
+
+	return db.GetGame(uuidGame)
+}
+
 func (db *DB) DeleteGame(uuidGame string) *Error {
 	if _, err := db.GetGame(uuidGame); err != nil {
 		return &Error{Err: err, Message: "deleteGame", Code: 404}

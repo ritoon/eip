@@ -31,6 +31,13 @@ func (h *Handler) LoginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	err = payload.ValidateLogin()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	u, err := dbConn.GetUserByEmail(payload.Email)
 	if err != nil {
 		RespErr(ctx, err)

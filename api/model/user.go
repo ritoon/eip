@@ -42,6 +42,16 @@ type UserLogin struct {
 	Pass  *Password `json:"pass,omitempty"`
 }
 
+func (us *UserLogin) ValidateLogin() error {
+	if us.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+	if us.Pass == nil {
+		return fmt.Errorf("password is required")
+	}
+	return nil
+}
+
 func (p *Password) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
