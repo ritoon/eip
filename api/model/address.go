@@ -7,13 +7,13 @@ import (
 
 type Address struct {
 	DBField
-	UUIDOwner string `json:"uuid_owner" gorm:"index;colum:uuid_owner"`
-	Street    string `json:"street"`
-	City      string `json:"city"`
-	State     string `json:"state"`
-	Zip       string `json:"zip"`
-	Lat       string `json:"lat"`
-	Lng       string `json:"lng"`
+	UUIDOwner string  `json:"uuid_owner" gorm:"index;colum:uuid_owner"`
+	Street    string  `json:"street"`
+	City      string  `json:"city"`
+	State     string  `json:"state"`
+	Zip       string  `json:"zip"`
+	Lat       float64 `json:"lat"`
+	Lng       float64 `json:"lng"`
 }
 
 func (Address) TableName() string {

@@ -14,6 +14,12 @@ func RespErr(ctx *gin.Context, err error) {
 	respErr(ctx, err)
 }
 
+func RespErrWithCode(ctx *gin.Context, code int, err error) {
+	log.Println(err)
+	ctx.JSON(code, gin.H{"error": err})
+	ctx.Abort()
+}
+
 func respErr(ctx *gin.Context, err error) {
 
 	switch e := err.(type) {

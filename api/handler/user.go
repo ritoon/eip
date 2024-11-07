@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/ritoon/eip/api/db"
+	"github.com/ritoon/eip/api/geocoding"
 	"github.com/ritoon/eip/api/model"
 	"github.com/ritoon/eip/api/util"
 )
@@ -62,6 +65,21 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	if u.Address.Zip != "" && u.Address.City != "" && u.Address.Street != "" {
+		ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+
+		lat, lng, err := geocoding.New(ctxWithTimeout, "")
+		if err != nil {
+			if !geocoding.ErrIsTimeout(err) {
+				RespErrWithCode(ctx, http.StatusServiceUnavailable, err)
+				return
+			}
+		}
+		u.Address.Lat = lat
+		u.Address.Lng = lng
 	}
 
 	err = dbConn.CreateUser(&u)
