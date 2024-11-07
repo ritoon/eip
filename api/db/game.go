@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ritoon/eip/api/model"
@@ -34,7 +35,7 @@ func (db *DB) DeleteGame(uuidGame string) *Error {
 	return nil
 }
 
-func (db *DB) SearchGames(name string) ([]model.Game, error) {
+func (db *DB) SearchGames(ctx context.Context, name string) ([]model.Game, error) {
 	var games []model.Game
 	if name != "" {
 		err := db.dbConn.Where("name = ?", name).Find(&games).Error

@@ -38,18 +38,12 @@ func GetCache(cache *cache.Redis, duration time.Duration, keyName, queryName str
 			body:           bytes.NewBuffer([]byte{}),
 			ResponseWriter: ctx.Writer,
 		}
-
 		ctx.Writer = &cacheContext
 
 		ctx.Next()
-		log.Println("GetCache after")
-
 		if ctx.Writer.Status() != http.StatusOK {
 			return
 		}
-
-		log.Println("GetCache set cache")
-
 		err = cache.Set(ctx, keyName+"-"+query, cacheContext.body.Bytes(), duration)
 		if err != nil {
 			funcErr(ctx, err)

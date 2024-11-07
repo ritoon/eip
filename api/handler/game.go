@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ritoon/eip/api/model"
@@ -46,8 +48,10 @@ func (h *Handler) DeleteGame(ctx *gin.Context) {
 
 func (h *Handler) SearchGames(ctx *gin.Context) {
 	name := ctx.Query("name")
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 
-	games, err := dbConn.SearchGames(name)
+	games, err := dbConn.SearchGames(ctxWithTimeout, name)
 	if err != nil {
 		RespErr(ctx, err)
 		return

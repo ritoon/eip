@@ -28,11 +28,6 @@ func New(addr string, password string, db int) *Redis {
 }
 
 func (r *Redis) Set(c context.Context, key string, value interface{}, duration time.Duration) error {
-	// data, err := json.Marshal(value)
-	// if err != nil {
-	// 	return err
-	// }
-	// log.Println("cache: Set key: ", key)
 	err := r.client.Set(c, key, value, duration).Err()
 	if err != nil {
 		return err
