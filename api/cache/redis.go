@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -28,13 +27,13 @@ func New(addr string, password string, db int) *Redis {
 	return &Redis{client: rdb}
 }
 
-func (r *Redis) Set(c context.Context, key string, value interface{}) error {
-	data, err := json.Marshal(value)
-	if err != nil {
-		return err
-	}
-	log.Println("cache: Set key: ", key)
-	err = r.client.Set(c, key, data, 10*time.Second).Err()
+func (r *Redis) Set(c context.Context, key string, value interface{}, duration time.Duration) error {
+	// data, err := json.Marshal(value)
+	// if err != nil {
+	// 	return err
+	// }
+	// log.Println("cache: Set key: ", key)
+	err := r.client.Set(c, key, value, duration).Err()
 	if err != nil {
 		return err
 	}

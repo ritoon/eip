@@ -18,7 +18,7 @@ var dbConn = db.New()
 // @Summary login user
 // @Schemes http
 // @Description do ping
-// @Tags example
+// @Tags user
 // @Accept json
 // @Param payload body model.UserLogin true "User login"
 // @Produce json
@@ -65,6 +65,15 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
+// GetUser godoc
+// @Summary get a user by its uuid
+// @Schemes http
+// @Tags user
+// @Accept json
+// @Param uuid path string true "uuid of the user"
+// @Param Authorization header string true "bearer token"
+// @Success 200 {object} model.User
+// @Router /users/:uuid [get]
 func (h *Handler) GetUser(ctx *gin.Context) {
 	uuid := ctx.Param("uuid")
 	u, err := dbConn.GetUser(uuid)

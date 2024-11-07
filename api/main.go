@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -23,13 +25,15 @@ func main() {
 
 	router.POST("login", h.LoginUser)
 
+	cache2minForGames := util.GetCache(cacheConn, 2*time.Second, "searchgames", "name", handler.RespErr)
+
 	// Users
 	router.POST("users", gin.BasicAuth(account), h.CreateUser)
 	router.GET("users/:uuid", jwtValidation, h.GetUser)
 	router.DELETE("users/:uuid", jwtValidation, h.DeleteUser)
 
 	// Games
-	router.GET("games", jwtValidation, h.SearchGames)
+	router.GET("games", jwtValidation, cache2minForGames, h.SearchGames)
 	router.POST("games", jwtValidation, h.CreateGame)
 	router.GET("games/:uuid", jwtValidation, h.GetGame)
 	router.DELETE("games/:uuid", jwtValidation, h.DeleteGame)

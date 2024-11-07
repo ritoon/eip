@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,53 +46,11 @@ func (h *Handler) DeleteGame(ctx *gin.Context) {
 
 func (h *Handler) SearchGames(ctx *gin.Context) {
 	name := ctx.Query("name")
-	res, err := h.cache.Get(ctx, "searchgames-"+name)
-	if err == nil {
-		ctx.Writer.WriteHeader(http.StatusOK)
-		ctx.Header("Content-Type", "application/json")
-		ctx.Writer.Write(res)
-		return
-	}
-
-	log.Println("err redis", err)
 
 	games, err := dbConn.SearchGames(name)
 	if err != nil {
 		RespErr(ctx, err)
 		return
 	}
-	err = h.cache.Set(ctx, "searchgames-"+name, games)
-	if err != nil {
-		RespErr(ctx, err)
-		return
-	}
 	ctx.JSON(http.StatusOK, games)
-
 }
-
-// func  SearchGames(ctx *gin.Context) gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 	name := ctx.Query("name")
-// 	res, err := h.cache.Get(ctx, "searchgames-"+name)
-// 	if err == nil {
-// 		ctx.Writer.WriteHeader(http.StatusOK)
-// 		ctx.Header("Content-Type", "application/json")
-// 		ctx.Writer.Write(res)
-// 		return
-// 	}
-
-// 	log.Println("err redis", err)
-
-// 	games, err := dbConn.SearchGames(name)
-// 	if err != nil {
-// 		RespErr(ctx, err)
-// 		return
-// 	}
-// 	err = h.cache.Set(ctx, "searchgames-"+name, games)
-// 	if err != nil {
-// 		RespErr(ctx, err)
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusOK, games)
-
-// }

@@ -1,4 +1,63 @@
 definitions:
+  model.Address:
+    properties:
+      city:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      lat:
+        type: string
+      lng:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      uuid:
+        type: string
+      uuid_owner:
+        type: string
+      zip:
+        type: string
+    type: object
+  model.Game:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      name:
+        type: string
+      uri_image:
+        type: string
+      uuid:
+        type: string
+      uuid_owner:
+        type: string
+    type: object
+  model.User:
+    properties:
+      address:
+        $ref: '#/definitions/model.Address'
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      games:
+        items:
+          $ref: '#/definitions/model.Game'
+        type: array
+      name:
+        type: string
+      pass:
+        type: string
+      uuid:
+        type: string
+    type: object
   model.UserLogin:
     properties:
       email:
@@ -35,5 +94,28 @@ paths:
             $ref: '#/definitions/util.JWTResponse'
       summary: login user
       tags:
-      - example
+      - user
+  /users/:uuid:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid of the user
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: get a user by its uuid
+      tags:
+      - user
 swagger: "2.0"
