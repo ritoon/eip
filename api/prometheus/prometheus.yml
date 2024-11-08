@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 5s # Intervalle de scraping par défaut pour toutes les cibles
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "golang-gin-api"
+    scrape_interval: 5s # Intervalle spécifique pour ce job
+    static_configs:
+      - targets: ["api:8888"] # Remplace par l'URL de ton application Go

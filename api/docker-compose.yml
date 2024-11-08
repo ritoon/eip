@@ -7,12 +7,66 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-  # geocode:
-  #   image: "mediagis/nominatim:4.3⁠"
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus/
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - redis
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    depends_on:
+      - prometheus
+  api:
+    image: eip/api:latest
+    container_name: api
+    ports:
+      - "8888:8888"
+    depends_on:
+      - redis
+  front:
+    image: eip/front:latest
+    container_name: front
+    ports:
+      - "8880:8880"
+    depends_on:
+      - redis
+      - api
+  geo:
+    image: eip/geo:latest
+    container_name: geo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+
+  # tempo:
+  #   image: grafana/tempo:latest
   #   ports:
-  #     - "8080:8080"
+  #     - "14268:14268" # Port pour les traces
+  #     - "14250:14250" # Port gRPC
   #   environment:
-  #     NOMINATIM_PBF_URL: "https://download.geofabrik.de/europe/france-latest.osm.pbf"
-  #     NOMINATIM_PBF_MD5_URL: "https://download.geofabrik.de/europe/france-latest.osm.pbf.md5"
+  #     - TEMPO_SERVER_HTTP_LISTENPORT=14268
+
+  # tempo-query:
+  #   image: grafana/tempo-query:latest
+  #   ports:
+  #     - "16686:16686"
+  #   environment:
+  #     - QUERY_FRONTEND_SERVER_ADDRESS=tempo:3100
+  #   depends_on:
+  #     - tempo
+
 volumes:
   redis-data:

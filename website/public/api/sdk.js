@@ -5,6 +5,10 @@ class ApiClient {
     this.baseURL = baseURL;
   }
 
+  setToken(token) {
+    this.token = token;
+  }
+
   // Fonction pour le login
   async login(email, password) {
     return this._post("/login", { email, pass: password });
@@ -17,6 +21,10 @@ class ApiClient {
 
   async read(entity, id) {
     return this._get(`/${entity}/${id}`);
+  }
+
+  async getAll(entity) {
+    return this._get(`/${entity}`);
   }
 
   async update(entity, id, data) {
@@ -66,7 +74,7 @@ class ApiClient {
   _getHeaders() {
     return {
       "Content-Type": "application/json",
-      Authorization: "Bearer YOUR_TOKEN", // Remplacer par le token de session après login
+      Authorization: `Bearer ` + this.token,
     };
   }
 

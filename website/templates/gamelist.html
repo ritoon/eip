@@ -9,7 +9,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{.BaseURL}}/public/apple-touch-icon.png" />
     <link rel="manifest" href="{{.BaseURL}}/public/site.webmanifest" />
     <title>Liste des jeux</title>
-    <link rel="stylesheet" href="{{.BaseURL}}/public/css/pico.min.css">
+    <link rel="stylesheet" href="{{.BaseURL}}/public/pico/css/pico.min.css">
+    <script src="{{.BaseURL}}/public/api/sdk.js"></script>
     <style>
         /* Styles supplémentaires pour ajuster la grille et les vignettes */
         .gallery {
@@ -81,7 +82,7 @@
 
         <!-- Liste des jeux -->
         <section id="gameList">
-            <div class="game" data-title="Jeu de lettres" data-age="7" data-type="letters" data-players="2">
+            {{/* <div class="game" data-title="Jeu de lettres" data-age="7" data-type="letters" data-players="2">
                 <div class="gallery-item">
                     <img src="https://via.assets.so/game.jpg?w=150&h=80" alt="Image 1">
                     <h3>Jeu de lettres A</h3>
@@ -95,7 +96,7 @@
                     <p>Âge: Dès 10 ans, Type: Jeux de stratégie, Joueurs: 4</p>
                 </div>
             </div>
-            <!-- Ajoutez plus de jeux avec leurs attributs de données -->
+            <!-- Ajoutez plus de jeux avec leurs attributs de données --> */}}
         </section>
     </main>
 
@@ -150,6 +151,45 @@
         document.getElementById("ageFilter").addEventListener("change", filterGames);
         document.getElementById("typeFilter").addEventListener("change", filterGames);
         document.getElementById("playersFilter").addEventListener("change", filterGames);
+
+        const sdk = new ApiClient("{{.APIBaseURL | js}}");
+        const token = sessionStorage.getItem("jwt");
+        sdk.setToken(token);
+        sdk.getAll("games").then(games => {
+            console.log(games);
+            const gameList = document.getElementById("gameList");
+
+            games.forEach(game => {
+                const gameElement = document.createElement("div");
+                gameElement.classList.add("game");
+                gameElement.dataset.title = game.title;
+                gameElement.dataset.age = game.age;
+                gameElement.dataset.type = game.type;
+                gameElement.dataset.players = game.players_nb;
+
+                const galleryItem = document.createElement("div");
+                galleryItem.classList.add("gallery-item");
+
+                const image = document.createElement("img");
+                image.src = game.uri_image;
+                image.alt = game.title;
+                galleryItem.appendChild(image);
+
+                const title = document.createElement("h3");
+                title.textContent = game.title;
+                galleryItem.appendChild(title);
+
+                const description = document.createElement("p");
+                description.textContent = `Âge: Dès ${game.age} ans, Type: ${game.type}, Joueurs: ${game.players}`;
+                galleryItem.appendChild(description);
+
+                gameElement.appendChild(galleryItem);
+                gameList.appendChild(gameElement);
+            });
+
+            {{/* filterGames(); */}}
+        });
+
     </script>
 
 </body>

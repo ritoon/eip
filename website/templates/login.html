@@ -129,7 +129,7 @@
   
   <script>
     // Crée une instance du SDK de l'API
-    const sdk = new ApiClient({{.BaseURL}}); // Crée une instance du
+    const sdk = new ApiClient({{.APIBaseURL}}); // Crée une instance du
     // Ajoute un gestionnaire d'événements pour le formulaire de connexion
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
         // Empêche la soumission du formulaire par défaut.
@@ -144,7 +144,7 @@
             // on récupère la valeur de base-url sans qu'elle soit backslashed par le moteur de template
             const baseURL = {{ .BaseURL | js }};
             // Redirige l'utilisateur vers la page de recherche en cas de succès
-            window.location.href = baseURL + '/pages/search';
+            window.location.href = baseURL + '/search';
         }).catch((err) => {
             // Affiche un message d'erreur en cas d'échec
             document.getElementById('message').innerText = 'Login failed: Invalid credentials.';

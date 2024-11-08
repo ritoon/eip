@@ -12,6 +12,21 @@ import (
 	"github.com/ritoon/eip/api/util"
 )
 
+// Register godoc
+// @Summary register user
+// @Schemes http
+// @Description register a new user
+// @Tags user
+// @Accept json
+// @Param Authorization header string true "basic auth"
+// @Param user body model.User true "User"
+// @Produce json
+// @Success 201 {object} model.User
+// @Router /register [post]
+func (h *Handler) RegisterUser(ctx *gin.Context) {
+	h.CreateUser(ctx)
+}
+
 // LoginUser godoc
 // @Summary login user
 // @Schemes http
@@ -82,7 +97,7 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 		defer cancel()
 
 		// get the latitude and longitude from the address
-		lat, lng, err := geocoding.New(ctxWithTimeout, "")
+		lat, lng, err := geocoding.New(ctxWithTimeout, u.Address.String())
 		if err != nil {
 			if !geocoding.ErrIsTimeout(err) {
 				RespErrWithCode(ctx, http.StatusServiceUnavailable, err)

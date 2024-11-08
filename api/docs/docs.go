@@ -324,6 +324,40 @@ var doc = `{
                 }
             }
         },
+        "/register": {
+            "post": {
+                "description": "register a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "register user",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "consumes": [
@@ -472,6 +506,10 @@ var doc = `{
         "model.Game": {
             "type": "object",
             "properties": {
+                "age": {
+                    "description": "Age for playing with the game.",
+                    "type": "string"
+                },
                 "created_at": {
                     "description": "CreatedAt is the time when the model was created.",
                     "type": "string"
@@ -482,6 +520,14 @@ var doc = `{
                 },
                 "name": {
                     "description": "Name is the name of the game.",
+                    "type": "string"
+                },
+                "players_nb": {
+                    "description": "PlayersNb is the number of players for the game.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of the game.",
                     "type": "string"
                 },
                 "uri_image": {

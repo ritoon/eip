@@ -32,7 +32,7 @@ func New(ctx context.Context, query string) (lat float64, lng float64, err error
 	}
 	urlQuery := url.PathEscape(query)
 	// create new request with context
-	r, err := http.NewRequestWithContext(ctx, "GET", "http://localhost:8080/search?q="+urlQuery, nil)
+	r, err := http.NewRequestWithContext(ctx, "GET", "http://geo:8080/search?q="+urlQuery, nil)
 	if err != nil {
 		return 0, 0, err
 	}

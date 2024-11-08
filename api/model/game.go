@@ -12,6 +12,12 @@ type Game struct {
 	UUIDOwner string `json:"uuid_owner" gorm:"index"`
 	// Name is the name of the game.
 	Name string `json:"name"`
+	// Age for playing with the game.
+	Age string `json:"age"`
+	// Type of the game.
+	Type string `json:"type"`
+	// PlayersNb is the number of players for the game.
+	PlayersNb string `json:"players_nb"`
 	// URIImage is the URI of the image of the game.
 	URIImage string `json:"uri_image"`
 }

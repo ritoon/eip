@@ -34,6 +34,9 @@ definitions:
     type: object
   model.Game:
     properties:
+      age:
+        description: Age for playing with the game.
+        type: string
       created_at:
         description: CreatedAt is the time when the model was created.
         type: string
@@ -42,6 +45,12 @@ definitions:
         type: string
       name:
         description: Name is the name of the game.
+        type: string
+      players_nb:
+        description: PlayersNb is the number of players for the game.
+        type: string
+      type:
+        description: Type of the game.
         type: string
       uri_image:
         description: URIImage is the URI of the image of the game.
@@ -294,6 +303,28 @@ paths:
           schema:
             $ref: '#/definitions/util.JWTResponse'
       summary: login user
+      tags:
+      - user
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register a new user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: register user
       tags:
       - user
   /users:
