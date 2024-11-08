@@ -7,9 +7,9 @@ import (
 // DBField is a struct that contains the common fields for all the models.
 type DBField struct {
 	// UUID is the UUID of the model.
-	UUID string `json:"uuid" gorm:"primaryKey"`
+	UUID string `json:"uuid" gorm:"primaryKey;<-:create"`
 	// CreatedAt is the time when the model was created.
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;<-:create"`
 	// UpdatedAt is the time when the model was updated.
 	DeletedAt time.Time `json:"deleted_at"`
 }
