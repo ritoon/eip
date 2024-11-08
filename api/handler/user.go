@@ -131,7 +131,7 @@ func (h *Handler) GetUser(ctx *gin.Context) {
 // @Tags user
 // @Accept json
 // @Param uuid path string true "uuid of the user"
-// @Param Authorization header string true "
+// @Param Authorization header string true "bearer token"
 // @Success 202
 // @Router /users/:uuid [delete]
 func (h *Handler) DeleteUser(ctx *gin.Context) {

@@ -24,7 +24,7 @@ func (c *CacheContext) Write(b []byte) (int, error) {
 }
 
 // GetCache is a function to get cache from redis and set cache to redis if not found.
-func GetCache(cache *cache.Redis, duration time.Duration, keyName, queryName string, funcErr func(ctx *gin.Context, err error)) gin.HandlerFunc {
+func GetCache(cache cache.Cacher, duration time.Duration, keyName, queryName string, funcErr func(ctx *gin.Context, err error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// get the query from the request
 		query := ctx.Query(queryName)

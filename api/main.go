@@ -12,7 +12,7 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/ritoon/eip/api/cache"
+	"github.com/ritoon/eip/api/cache/mokecache"
 	"github.com/ritoon/eip/api/db"
 	"github.com/ritoon/eip/api/docs"
 	"github.com/ritoon/eip/api/handler"
@@ -30,7 +30,7 @@ func main() {
 
 	// create all connections
 	dbConn := db.New()
-	cacheConn := cache.New("localhost:6379", "", 0)
+	cacheConn := mokecache.New()
 	h := handler.New(dbConn)
 
 	// create all middlewares
