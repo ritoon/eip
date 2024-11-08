@@ -7,10 +7,12 @@ import (
 	"github.com/ritoon/eip/api/model"
 )
 
+// DB holds the database connection
 type DB struct {
 	dbConn *gorm.DB
 }
 
+// New creates a new database connection
 func New() *DB {
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {

@@ -20,25 +20,31 @@ import (
 )
 
 func main() {
+	// pprof for debug and profiling
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
 
+	// create router for gin
 	router := gin.Default()
-	docs.SwaggerInfo.BasePath = "/"
-	jwtValidation := util.ValidateJwt()
-	// account := gin.Accounts{"admin": "admin"}
+
+	// create all connections
 	dbConn := db.New()
 	cacheConn := cache.New("localhost:6379", "", 0)
-	h := handler.New(cacheConn, dbConn)
+	h := handler.New(dbConn)
 
+	// create all middlewares
+	// account := gin.Accounts{"admin": "admin"}
+	jwtValidation := util.ValidateJwt()
 	cache2minForGames := util.GetCache(cacheConn, 2*time.Second, "searchgames", "name", handler.RespErr)
 	rateLimitByIPForLogin := ginratelimit.RateLimitByIP(ginratelimit.NewTokenBucket(5, 1*time.Minute))
 	rateLimitByIP := ginratelimit.RateLimitByIP(ginratelimit.NewTokenBucket(1000, 1*time.Minute))
 	rateLimitUser := util.RateLimitUser(ginratelimit.NewTokenBucket(1000, 1*time.Minute))
 
+	// add the login route
 	router.POST("login", rateLimitByIPForLogin, h.LoginUser)
 
+	// add the api routes
 	var v1 = router.Group("/api/v1")
 	v1.Use(rateLimitByIP, jwtValidation, rateLimitUser)
 	{
@@ -60,17 +66,20 @@ func main() {
 		v1.DELETE("addresses/:uuid", jwtValidation, h.DeleteAddress)
 	}
 
+	// Pages in HTML
 	router.LoadHTMLGlob("templates/*")
-
 	router.Static("/public", "./public")
 	// router.StaticFile("/favicon.ico", "./public/favicon.ico")
 	var pages = router.Group("/pages")
 	{
 		pages.GET("login", h.PageLogin)
+		pages.GET("search", h.PageGameList)
 	}
 
-	// swagger
+	// Swagger
+	docs.SwaggerInfo.BasePath = "/"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
+	// run the server
 	router.Run(":8888")
 }

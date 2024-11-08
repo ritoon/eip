@@ -4,20 +4,163 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="base-url" content="/">
-    <base href="{{.}}" />
-    
-    <link rel="stylesheet" href="public/pico/css/pico.min.css">
-    <title>Hello world!</title>
+    <meta name="base-url" content="{{.BaseURL}}">
+    <link rel="icon" type="image/png" href="{{.BaseURL}}/public/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{.BaseURL}}/public/favicon.svg" />
+    <link rel="shortcut icon" href="{{.BaseURL}}/public/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{.BaseURL}}/public/apple-touch-icon.png" />
+    <link rel="manifest" href="{{.BaseURL}}/public/site.webmanifest" />
+    <base href="{{.BaseURL}}" />
+    <link rel="stylesheet" href="{{.BaseURL}}/public/pico/css/pico.min.css">
+    <script src="{{.BaseURL}}/public/api/sdk.js"></script>
+    <title>{{.Title}}</title>
+    <style>
+        /* Styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #282c34;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Conteneur principal pour les couches de parallaxe */
+        .parallax-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        {{/* .layer-background {
+            background-image: url('{{.BaseURL}}/public/fond.png');
+            background-size: cover;
+            z-index: 1;
+        }
+
+        .layer-middle {
+            background-image: url('{{.BaseURL}}/public/fille.png');
+            background-size: cover;
+            z-index: 2;
+        } */}}
+
+        .layer-foreground {
+            background-image: url('{{.BaseURL}}/public/fond.png');
+            background-position: center;
+            background-size: cover;
+            z-index: 3;
+        }
+
+        /* Formulaire de connexion */
+        .login-form {
+            position: relative;
+            z-index: 4;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .login-form h2 {
+            margin-bottom: 1rem;
+        }
+
+        .login-form input, .login-form button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .login-form input {
+            background: #eee;
+        }
+
+        .login-form button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
   </head>
   <body>
-    <main class="container">
-      <h1>Login</h1>
-        <form action="login" method="post">
-        <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="email">
-        <input type="password" name="pass" placeholder="Password" aria-label="Password">
+
+    <!-- Conteneur de l'effet parallaxe -->
+    <div class="parallax-container">
+        {{/* <div class="parallax-layer layer-background"></div>
+        <div class="parallax-layer layer-middle"></div> */}}
+        <div class="parallax-layer layer-foreground"></div>
+    </div>
+
+    <main class="container login-form">
+    <h1>{{.Title}}</h1>
+        <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="email" id="email">
+        <input type="password" name="pass" placeholder="Password" aria-label="Password" id="password">
         <button type="submit">Login</button>
         </form>
+        <p id="message"></p>
     </main>
   </body>
+  
+  <script>
+    // Crée une instance du SDK de l'API
+    const sdk = new ApiClient({{.BaseURL}}); // Crée une instance du
+    // Ajoute un gestionnaire d'événements pour le formulaire de connexion
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        // Empêche la soumission du formulaire par défaut.
+        event.preventDefault(); 
+        // Récupère les valeurs des champs email et password.
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        // Appelle la méthode login de l'API SDK
+        const res = sdk.login(email, password).then((res) => {
+            // Stocke le jeton JWT dans le stockage de session du navigateur
+            sessionStorage.setItem("jwt", res.jwt);
+            // on récupère la valeur de base-url sans qu'elle soit backslashed par le moteur de template
+            const baseURL = {{ .BaseURL | js }};
+            // Redirige l'utilisateur vers la page de recherche en cas de succès
+            window.location.href = baseURL + '/pages/search';
+        }).catch((err) => {
+            // Affiche un message d'erreur en cas d'échec
+            document.getElementById('message').innerText = 'Login failed: Invalid credentials.';
+        });
+    });
+
+    document.addEventListener("mousemove", function(event) {
+            const layers = document.querySelectorAll(".parallax-layer");
+            const speed = [0.2, 0.4, 0.7]; // Différentes vitesses pour les couches (du fond au premier plan)
+
+            layers.forEach((layer, index) => {
+                const x = (window.innerWidth - event.pageX * speed[index]) / 60;
+                const y = (window.innerHeight - event.pageY * speed[index]) / 60;
+
+                layer.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+            });
+        });
+  </script>
 </html>

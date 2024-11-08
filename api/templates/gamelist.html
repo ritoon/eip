@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{.BaseURL}}/public/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{.BaseURL}}/public/favicon.svg" />
+    <link rel="shortcut icon" href="{{.BaseURL}}/public/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{.BaseURL}}/public/apple-touch-icon.png" />
+    <link rel="manifest" href="{{.BaseURL}}/public/site.webmanifest" />
+    <title>Liste des jeux</title>
+    <link rel="stylesheet" href="{{.BaseURL}}/public/css/pico.min.css">
+    <style>
+        /* Styles supplémentaires pour ajuster la grille et les vignettes */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            text-align: center;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item h3 {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <h1>Liste des Jeux</h1>
+
+        <!-- Filtres -->
+        <section id="filters">
+            <input type="text" id="titleFilter" placeholder="Rechercher par titre...">
+
+            <select id="ageFilter">
+                <option value="all">Tous les âges</option>
+                <option value="2">Dès 2 ans</option>
+                <option value="3">Dès 3 ans</option>
+                <option value="4">Dès 4 ans</option>
+                <option value="5">Dès 5 ans</option>
+                <option value="6">Dès 6 ans</option>
+                <option value="7">Dès 7 ans</option>
+                <option value="8">Dès 8 ans</option>
+                <option value="16">Ados – adultes</option>
+            </select>
+
+            <select id="typeFilter">
+                <option value="all">Tous les types</option>
+                <option value="cards">Jeu de cartes ou de dominos</option>
+                <option value="strategy">Jeux de stratégie</option>
+                <option value="abstract">Jeux combinatoires abstraits</option>
+                <option value="letters">Jeux de lettres</option>
+                <option value="luck">Jeux de hasard</option>
+                <option value="dexterity">Jeux d'adresse</option>
+                <option value="party">Jeux d'assemblée et jeux d'ambiance</option>
+                <option value="cooperative">Jeux coopératifs</option>
+            </select>
+
+            <select id="playersFilter">
+                <option value="all">Nombre de joueurs</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6+</option>
+            </select>
+        </section>
+
+        <!-- Liste des jeux -->
+        <section id="gameList">
+            <div class="game" data-title="Jeu de lettres" data-age="7" data-type="letters" data-players="2">
+                <div class="gallery-item">
+                    <img src="https://via.assets.so/game.jpg?w=150&h=80" alt="Image 1">
+                    <h3>Jeu de lettres A</h3>
+                    <p>Âge: Dès 7 ans, Type: Jeux de lettres, Joueurs: 2</p>
+                </div>
+            </div>
+            <div class="game" data-title="Jeu de stratégie" data-age="10" data-type="strategy" data-players="4">
+                <div class="gallery-item">
+                    <img src="https://via.assets.so/game.jpg?w=150&h=80" alt="Image 2">
+                    <h3>Jeu de stratégie B</h3>
+                    <p>Âge: Dès 10 ans, Type: Jeux de stratégie, Joueurs: 4</p>
+                </div>
+            </div>
+            <!-- Ajoutez plus de jeux avec leurs attributs de données -->
+        </section>
+    </main>
+
+    <script>
+        // Fonction de filtrage
+        function filterGames() {
+            const titleFilter = document.getElementById("titleFilter").value.toLowerCase();
+            const ageFilter = document.getElementById("ageFilter").value;
+            const typeFilter = document.getElementById("typeFilter").value;
+            const playersFilter = document.getElementById("playersFilter").value;
+
+            const games = document.querySelectorAll(".game");
+
+            games.forEach(game => {
+                const title = game.dataset.title.toLowerCase();
+                const age = game.dataset.age;
+                const type = game.dataset.type;
+                const players = game.dataset.players;
+
+                let isVisible = true;
+
+                // Filtre par titre
+                if (titleFilter && !title.includes(titleFilter)) {
+                    isVisible = false;
+                }
+
+                // Filtre par âge
+                if (ageFilter !== "all" && age < ageFilter) {
+                    isVisible = false;
+                }
+
+                // Filtre par type de jeu
+                if (typeFilter !== "all" && type !== typeFilter) {
+                    isVisible = false;
+                }
+
+                // Filtre par nombre de joueurs
+                if (playersFilter !== "all") {
+                    if (playersFilter === "6" && players < 6) {
+                        isVisible = false;
+                    } else if (playersFilter !== "6" && players !== playersFilter) {
+                        isVisible = false;
+                    }
+                }
+
+                game.style.display = isVisible ? "block" : "none";
+            });
+        }
+
+        // Écouteurs d'événements pour les filtres
+        document.getElementById("titleFilter").addEventListener("input", filterGames);
+        document.getElementById("ageFilter").addEventListener("change", filterGames);
+        document.getElementById("typeFilter").addEventListener("change", filterGames);
+        document.getElementById("playersFilter").addEventListener("change", filterGames);
+    </script>
+
+</body>
+</html>

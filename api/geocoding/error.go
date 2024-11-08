@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// Error represents a geocoding error.
+// It contains an error code, a message, and an origin error wrapped.
 type Error struct {
 	Code    int
 	Message string
@@ -19,6 +21,7 @@ func newErrorTimeout(message string, err error) *Error {
 	}
 }
 
+// ErrIsTimeout returns true if the error is a timeout error.
 func ErrIsTimeout(err error) bool {
 	if e, ok := err.(*Error); ok {
 		return e.Code == http.StatusRequestTimeout
@@ -26,6 +29,7 @@ func ErrIsTimeout(err error) bool {
 	return false
 }
 
+// Error returns the error message.
 func (e *Error) Error() string {
 	return fmt.Sprintf("db: %v - %s - %v", e.Code, e.Message, e.Err)
 }

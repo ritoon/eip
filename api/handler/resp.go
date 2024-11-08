@@ -9,11 +9,13 @@ import (
 	"github.com/ritoon/eip/api/db"
 )
 
+// RespErr respond error
 func RespErr(ctx *gin.Context, err error) {
 	log.Println(err)
 	respErr(ctx, err)
 }
 
+// RespErrWithCode respond error with code status
 func RespErrWithCode(ctx *gin.Context, code int, err error) {
 	log.Println(err)
 	ctx.JSON(code, gin.H{"error": err})
@@ -21,7 +23,7 @@ func RespErrWithCode(ctx *gin.Context, code int, err error) {
 }
 
 func respErr(ctx *gin.Context, err error) {
-
+	// switch type of error and respond with appropriate status code
 	switch e := err.(type) {
 	case *db.Error:
 		switch e.Code {

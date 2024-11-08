@@ -32,6 +32,7 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("db: %v - %s - %v", e.Code, e.Message, e.Err)
 }
 
+// NewError creates a new Error with the given code, message and error.
 func NewError(code ErrCode, message string, err error) *Error {
 	return &Error{
 		Code:    int(code),
@@ -40,10 +41,14 @@ func NewError(code ErrCode, message string, err error) *Error {
 	}
 }
 
+// NewErrorNotFound creates a new Error with the given message and error.
+// The code of the error is set to ErrCodeNotFound.
 func NewErrorNotFound(message string, err error) *Error {
 	return NewError(ErrCodeNotFound, message, err)
 }
 
+// NewErrorInternal creates a new Error with the given message and error.
+// The code of the error is set to ErrCodeInternal.
 func NewErrorInternal(message string, err error) *Error {
 	return NewError(ErrCodeInternal, message, err)
 }
