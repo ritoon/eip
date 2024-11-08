@@ -2,67 +2,93 @@ definitions:
   model.Address:
     properties:
       city:
+        description: 'City is the city of the address ex: New York.'
         type: string
       created_at:
+        description: CreatedAt is the time when the model was created.
         type: string
       deleted_at:
+        description: UpdatedAt is the time when the model was updated.
         type: string
       lat:
-        type: string
+        description: Lat is the latitude of the address.
+        type: number
       lng:
-        type: string
+        description: Lng is the longitude of the address.
+        type: number
       state:
+        description: 'State is the state of the address ex: NY.'
         type: string
       street:
+        description: 'Street is the street of the address ex: 123 Main St.'
         type: string
       uuid:
+        description: UUID is the UUID of the model.
         type: string
       uuid_owner:
+        description: UUIDOwner is the UUID of the owner of the address.
         type: string
       zip:
+        description: 'Zip is the zip code of the address ex: 10001.'
         type: string
     type: object
   model.Game:
     properties:
       created_at:
+        description: CreatedAt is the time when the model was created.
         type: string
       deleted_at:
+        description: UpdatedAt is the time when the model was updated.
         type: string
       name:
+        description: Name is the name of the game.
         type: string
       uri_image:
+        description: URIImage is the URI of the image of the game.
         type: string
       uuid:
+        description: UUID is the UUID of the model.
         type: string
       uuid_owner:
+        description: UUIDOwner is the UUID of the owner of the game.
         type: string
     type: object
   model.User:
     properties:
       address:
         $ref: '#/definitions/model.Address'
+        description: Address is the address of the user.
       created_at:
+        description: CreatedAt is the time when the model was created.
         type: string
       deleted_at:
+        description: UpdatedAt is the time when the model was updated.
         type: string
       email:
+        description: Email is the email of the user.
         type: string
       games:
+        description: Games is the games owned by this user.
         items:
           $ref: '#/definitions/model.Game'
         type: array
       name:
+        description: Name is the name of the user.
         type: string
       pass:
+        description: Pass is the password of the user in hash with SHA256.
         type: string
       uuid:
+        description: UUID is the UUID of the model.
         type: string
     type: object
   model.UserLogin:
     properties:
       email:
+        description: Email is the email of the user.
         type: string
       pass:
+        description: Pass is the password of the user in hash with SHA256.
         type: string
     type: object
   util.JWTResponse:
@@ -73,6 +99,181 @@ definitions:
 info:
   contact: {}
 paths:
+  /addresses:
+    post:
+      consumes:
+      - application/json
+      description: create address
+      parameters:
+      - description: Address
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/model.Address'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Address'
+      summary: create address
+      tags:
+      - address
+  /addresses/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: get addresses
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            items:
+              $ref: '#/definitions/model.Address'
+            type: array
+      summary: get addresses
+      tags:
+      - address
+    get:
+      consumes:
+      - application/json
+      description: get address
+      parameters:
+      - description: Address UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Address'
+      summary: get address
+      tags:
+      - address
+  /games:
+    get:
+      consumes:
+      - application/json
+      description: search games by name
+      parameters:
+      - description: Game name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Game'
+            type: array
+      summary: search games by name
+      tags:
+      - game
+    post:
+      consumes:
+      - application/json
+      description: create game
+      parameters:
+      - description: Game
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/model.Game'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Game'
+      summary: create game
+      tags:
+      - game
+  /games/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: update game
+      parameters:
+      - description: Game UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Game
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/model.Game'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/model.Game'
+      summary: update game
+      tags:
+      - game
+    get:
+      consumes:
+      - application/json
+      description: get game
+      parameters:
+      - description: Game UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Game'
+      summary: get game
+      tags:
+      - game
+  /games/{uuid}/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Add image to game
+      parameters:
+      - description: Game UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Image file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/model.Game'
+      summary: Add image to game
+      tags:
+      - game
   /login:
     post:
       consumes:
@@ -95,7 +296,48 @@ paths:
       summary: login user
       tags:
       - user
+  /users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: create user
+      tags:
+      - user
   /users/:uuid:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid of the user
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "202":
+          description: ""
+      summary: delete a user by its uuid
+      tags:
+      - user
     get:
       consumes:
       - application/json

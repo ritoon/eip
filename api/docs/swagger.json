@@ -4,6 +4,272 @@
         "contact": {}
     },
     "paths": {
+        "/addresses": {
+            "post": {
+                "description": "create address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "create address",
+                "parameters": [
+                    {
+                        "description": "Address",
+                        "name": "address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Address"
+                        }
+                    }
+                }
+            }
+        },
+        "/addresses/{uuid}": {
+            "get": {
+                "description": "get address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "get address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Address"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "get addresses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "get addresses",
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Address"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/games": {
+            "get": {
+                "description": "search games by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "search games by name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game name",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Game"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "create game",
+                "parameters": [
+                    {
+                        "description": "Game",
+                        "name": "game",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{uuid}": {
+            "get": {
+                "description": "get game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "get game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "update game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "update game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Game",
+                        "name": "game",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{uuid}/image": {
+            "post": {
+                "description": "Add image to game",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "game"
+                ],
+                "summary": "Add image to game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/model.Game"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "do ping",
@@ -33,6 +299,39 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/util.JWTResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "create user",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
                         }
                     }
                 }
@@ -71,6 +370,36 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "delete a user by its uuid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "uuid of the user",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": ""
+                    }
+                }
             }
         }
     },
@@ -79,33 +408,43 @@
             "type": "object",
             "properties": {
                 "city": {
+                    "description": "City is the city of the address ex: New York.",
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "CreatedAt is the time when the model was created.",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "UpdatedAt is the time when the model was updated.",
                     "type": "string"
                 },
                 "lat": {
-                    "type": "string"
+                    "description": "Lat is the latitude of the address.",
+                    "type": "number"
                 },
                 "lng": {
-                    "type": "string"
+                    "description": "Lng is the longitude of the address.",
+                    "type": "number"
                 },
                 "state": {
+                    "description": "State is the state of the address ex: NY.",
                     "type": "string"
                 },
                 "street": {
+                    "description": "Street is the street of the address ex: 123 Main St.",
                     "type": "string"
                 },
                 "uuid": {
+                    "description": "UUID is the UUID of the model.",
                     "type": "string"
                 },
                 "uuid_owner": {
+                    "description": "UUIDOwner is the UUID of the owner of the address.",
                     "type": "string"
                 },
                 "zip": {
+                    "description": "Zip is the zip code of the address ex: 10001.",
                     "type": "string"
                 }
             }
@@ -114,21 +453,27 @@
             "type": "object",
             "properties": {
                 "created_at": {
+                    "description": "CreatedAt is the time when the model was created.",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "UpdatedAt is the time when the model was updated.",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Name is the name of the game.",
                     "type": "string"
                 },
                 "uri_image": {
+                    "description": "URIImage is the URI of the image of the game.",
                     "type": "string"
                 },
                 "uuid": {
+                    "description": "UUID is the UUID of the model.",
                     "type": "string"
                 },
                 "uuid_owner": {
+                    "description": "UUIDOwner is the UUID of the owner of the game.",
                     "type": "string"
                 }
             }
@@ -137,30 +482,38 @@
             "type": "object",
             "properties": {
                 "address": {
+                    "description": "Address is the address of the user.",
                     "$ref": "#/definitions/model.Address"
                 },
                 "created_at": {
+                    "description": "CreatedAt is the time when the model was created.",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "UpdatedAt is the time when the model was updated.",
                     "type": "string"
                 },
                 "email": {
+                    "description": "Email is the email of the user.",
                     "type": "string"
                 },
                 "games": {
+                    "description": "Games is the games owned by this user.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.Game"
                     }
                 },
                 "name": {
+                    "description": "Name is the name of the user.",
                     "type": "string"
                 },
                 "pass": {
+                    "description": "Pass is the password of the user in hash with SHA256.",
                     "type": "string"
                 },
                 "uuid": {
+                    "description": "UUID is the UUID of the model.",
                     "type": "string"
                 }
             }
@@ -169,9 +522,11 @@
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "Email is the email of the user.",
                     "type": "string"
                 },
                 "pass": {
+                    "description": "Pass is the password of the user in hash with SHA256.",
                     "type": "string"
                 }
             }
