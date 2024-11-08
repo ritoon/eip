@@ -159,3 +159,41 @@ func (h *Handler) AddImageToGame(ctx *gin.Context) {
 	// return the game
 	ctx.JSON(http.StatusAccepted, game)
 }
+
+// UpdateGame
+// @Summary update Game
+// @Schemes http
+// @Tags Game
+// @Accept json
+// @Param uuid path string true "uuid of the Game"
+// @Param Authorization header string true "
+// @Param Game body model.Game true "Game"
+// @Produce json
+// @Success 201 {object} model.Game
+// @Router /games/:uuid [patch]
+func (h *Handler) UpdateGame(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	// create a new map and bind it to the context body
+	payload := make(map[string]interface{})
+	err := ctx.Bind(&payload)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// update the Game in the database with the given uuid and payload
+	err = h.db.UpdateGame(uuid, payload)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	u, err := h.db.GetGame(uuid)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	// return the Game created
+	ctx.JSON(http.StatusCreated, u)
+}
