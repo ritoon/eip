@@ -61,6 +61,12 @@ func ValidateJwt() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+		if len(authValue) > 1000 {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header is too long"})
+			ctx.Abort()
+			return
+		}
+
 		// Get the jwt token value from Authorization header
 		jwtValue := strings.ReplaceAll(authValue, "Bearer ", "")
 		// Parse the jwt token with CustomClaims

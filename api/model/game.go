@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/google/uuid"
+	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +25,6 @@ func (Game) TableName() string {
 // BeforeCreate is a method that implements the gorm.BeforeCreateInterface.
 // It generates a new UUID for the game when you want to create a new game.
 func (g *Game) BeforeCreate(tx *gorm.DB) (err error) {
-	g.UUID = uuid.New().String()
+	g.UUID = "gam-" + ksuid.New().String()
 	return
 }

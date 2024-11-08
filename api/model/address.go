@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/google/uuid"
+	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ func (Address) TableName() string {
 // BeforeCreate is a method that implements the gorm.BeforeCreateInterface.
 // It generates a new UUID for the address when you want to create a new address.
 func (a *Address) BeforeCreate(tx *gorm.DB) (err error) {
-	a.UUID = uuid.New().String()
+	a.UUID = "add-" + ksuid.New().String()
 	return
 }
 

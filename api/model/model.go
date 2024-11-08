@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 // DBField is a struct that contains the common fields for all the models.
 type DBField struct {

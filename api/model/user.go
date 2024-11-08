@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/uuid"
+	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
 
@@ -30,7 +30,7 @@ func (User) TableName() string {
 // BeforeCreate is a method that implements the gorm.BeforeCreateInterface.
 // It generates a new UUID for the user when you want to create a new user.
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	u.UUID = uuid.New().String()
+	u.UUID = "usr-" + ksuid.New().String()
 	return
 }
 
