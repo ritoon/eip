@@ -120,6 +120,44 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
+// UpdateUser
+// @Summary update user
+// @Schemes http
+// @Tags user
+// @Accept json
+// @Param uuid path string true "uuid of the user"
+// @Param Authorization header string true "
+// @Param user body model.User true "User"
+// @Produce json
+// @Success 201 {object} model.User
+// @Router /users/:uuid [patch]
+func (h *Handler) UpdateUser(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	// create a new map and bind it to the context body
+	payload := make(map[string]interface{})
+	err := ctx.Bind(&payload)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// update the user in the database with the given uuid and payload
+	err = h.db.UpdateUser(uuid, payload)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	u, err := h.db.GetUser(uuid)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	// return the user created
+	ctx.JSON(http.StatusCreated, u)
+}
+
 // GetUser is a method that returns a user by its uuid.
 // @Summary get a user by its uuid
 // @Schemes http

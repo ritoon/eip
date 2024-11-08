@@ -80,18 +80,21 @@ func main() {
 		// Users
 		v1.POST("users", h.CreateUser)
 		v1.GET("users/:uuid", h.GetUser)
+		v1.PATCH("users/:uuid", h.UpdateUser)
 		v1.DELETE("users/:uuid", jwtValidation, h.DeleteUser)
 
 		// Games
 		v1.GET("games", jwtValidation, cache2minForGames, h.SearchGames)
 		v1.POST("games", jwtValidation, h.CreateGame)
 		v1.GET("games/:uuid", jwtValidation, h.GetGame)
+		v1.PATCH("games/:uuid", h.UpdateGame)
 		v1.DELETE("games/:uuid", jwtValidation, h.DeleteGame)
 		v1.POST("games/:uuid/images", jwtValidation, h.AddImageToGame)
 
 		// Addresses
 		v1.POST("addresses", jwtValidation, h.CreateAddress)
 		v1.GET("addresses/:uuid", jwtValidation, h.GetAddress)
+		v1.PATCH("addresses/:uuid", h.UpdateAddress)
 		v1.DELETE("addresses/:uuid", jwtValidation, h.DeleteAddress)
 	}
 

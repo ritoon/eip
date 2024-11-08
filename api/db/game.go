@@ -73,3 +73,19 @@ func (db *DB) SearchGames(ctx context.Context, name string) ([]model.Game, error
 	}
 	return games, nil
 }
+
+// UpdateGame update game in db and return error if any.
+func (db *DB) UpdateGame(uuidGame string, data map[string]interface{}) *Error {
+	if _, err := db.GetGame(uuidGame); err != nil {
+		return &Error{Err: err, Message: "deleteGame", Code: 404}
+	}
+
+	delete(data, "uuid")
+	delete(data, "uuid_owner")
+	delete(data, "created_at")
+	delete(data, "updated_at")
+	delete(data, "deleted_at")
+
+	db.dbConn.Model(&model.Game{}).Where("uuid = ?", uuidGame).Updates(data)
+	return nil
+}

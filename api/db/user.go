@@ -55,3 +55,18 @@ func (db *DB) GetUserByEmail(email string) (*model.User, error) {
 	}
 	return &u, nil
 }
+
+// UpdateUser update user in db and return error if any.
+func (db *DB) UpdateUser(uuidUser string, data map[string]interface{}) *Error {
+	if _, err := db.GetUser(uuidUser); err != nil {
+		return &Error{Err: err, Message: "deleteUser", Code: 404}
+	}
+
+	delete(data, "uuid")
+	delete(data, "created_at")
+	delete(data, "updated_at")
+	delete(data, "deleted_at")
+
+	db.dbConn.Model(&model.User{}).Where("uuid = ?", uuidUser).Updates(data)
+	return nil
+}

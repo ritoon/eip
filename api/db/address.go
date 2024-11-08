@@ -36,3 +36,19 @@ func (db *DB) DeleteAddress(uuidAddress string) *Error {
 	db.dbConn.Where("uuid = ?", uuidAddress).Delete(&model.Address{})
 	return nil
 }
+
+// UpdateAddress update address in db and return error if any.
+func (db *DB) UpdateAddress(uuidAddress string, data map[string]interface{}) *Error {
+	if _, err := db.GetAddress(uuidAddress); err != nil {
+		return &Error{Err: err, Message: "deleteAddress", Code: 404}
+	}
+
+	delete(data, "uuid")
+	delete(data, "uuid_owner")
+	delete(data, "created_at")
+	delete(data, "updated_at")
+	delete(data, "deleted_at")
+
+	db.dbConn.Model(&model.Address{}).Where("uuid = ?", uuidAddress).Updates(data)
+	return nil
+}

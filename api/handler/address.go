@@ -56,6 +56,44 @@ func (h *Handler) GetAddress(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
+// UpdateAddress
+// @Summary update Address
+// @Schemes http
+// @Tags Address
+// @Accept json
+// @Param uuid path string true "uuid of the Address"
+// @Param Authorization header string true "
+// @Param Address body model.Address true "Address"
+// @Produce json
+// @Success 201 {object} model.Address
+// @Router /addresss/:uuid [patch]
+func (h *Handler) UpdateAddress(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	// create a new map and bind it to the context body
+	payload := make(map[string]interface{})
+	err := ctx.Bind(&payload)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// update the Address in the database with the given uuid and payload
+	err = h.db.UpdateAddress(uuid, payload)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	u, err := h.db.GetAddress(uuid)
+	if err != nil {
+		RespErr(ctx, err)
+		return
+	}
+
+	// return the Address created
+	ctx.JSON(http.StatusCreated, u)
+}
+
 // GetAddresses godoc
 // @Summary get addresses
 // @Description get addresses
