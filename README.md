@@ -12,13 +12,8 @@ Game list page with all pages
 ## Run locally
 
 ```sh
-cd front 
-make dev
-cd ../geocoding
-make dev
-cd ../api
-make dev
-docker compose up
+make build
+make run
 ```
 
 ## Metrics with grafana
